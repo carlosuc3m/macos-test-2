@@ -33,10 +33,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.m2/repository
-          key: ${{ runner.os }}-${{ matrix.os-version }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.os-version }}-maven-
-            ${{ runner.os }}-maven-
+        key: ${{ runner.os }}-${{ matrix.os-version }}-maven-${{ hashFiles('**/pom.xml') }}
+         restore-keys: |
+          ${{ runner.os }}-${{ matrix.os-version }}-maven-
+          ${{ runner.os }}-maven-
 
         # Set up the matrix to test on different macOS versions
         strategy:
