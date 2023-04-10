@@ -34,7 +34,7 @@ jobs:
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-${{ matrix.os-version }}-maven-${{ hashFiles('**/pom.xml') }}
-         restore-keys: |
+        restore-keys: |
           ${{ runner.os }}-${{ matrix.os-version }}-maven-
           ${{ runner.os }}-maven-
 
