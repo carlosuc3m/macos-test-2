@@ -1,0 +1,51 @@
+name: Java on macOS
+on:
+  #push:
+  #  branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build-and-run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, macos-10.15]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu' # See 'Supported distributions' for available options
+        java-version: '8'
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Cache weights file
+      uses: actions/cache@v2
+      with:
+        path: weights-torchscript.pt
+        key: ${{ runner.os }}-weights-${{ hashFiles('**/weights-torchscript.pt') }}
+        restore-keys: ${{ runner.os }}-weights-
+    - name: Download weights file
+      run: |
+        if test -f /Users/runner/work/macos-test-2/macos-test-2/weights-torchscript.pt; then
+            echo "File exists"
+        else
+            curl -o weights-torchscript.pt https://zenodo.org/api/files/a7eb8d94-9217-4276-8b0d-ff88e1ac78c7/weights-torchscript.pt
+        fi
+    - name: Build with Maven
+      run: mvn package
+    - name: Get directory where we are now
+      run: |
+        pwd
+        ls
+    - name: Build with Maven
+      run: mvn package shade:shade
+    - name: Run Java file
+      run: |
+        # java -jar target/dl-model-runner-0.0.0.jar
+        java -cp  target/pytorch-interface-javacpp-0.0.1.jar org.bioimageanalysis.icy.deeplearning.pytorch.PytorchInterface
+      
+

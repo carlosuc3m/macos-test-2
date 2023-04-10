@@ -59,8 +59,7 @@ public class PytorchInterface implements DeepLearningEngineInterface
     	/* try to use MKL when available */
         System.setProperty("org.bytedeco.openblas.load", "mkl");
     	// Load a Torchscript model
-    	String modelSource = "C:\\Users\\angel\\OneDrive\\Documentos\\deepimagej\\fiji-win64\\Fiji.app\\mode"
-    			+ "ls\\epitheliaaffinitymodel_torchscript\\torchscript_tracing.pt";
+    	String modelSource = "/Users/runner/work/macos-test-2/macos-test-2/weights-torchscript.pt";
     	BytePointer filenamePointer = new BytePointer(modelSource);
     	//JitModule model = org.bytedeco.pytorch.global.torch.import_ir_module(new CompilationUnit(),
     		//	modelSource);
@@ -84,7 +83,10 @@ public class PytorchInterface implements DeepLearningEngineInterface
     	// Retrieve result
     	float[] array = new float[256 * 256 * 8];
     	Indexer indexer = outputTensor.toTensor().createIndexer();
-    	
+    	double dd = indexer.getDouble(new long[] {0, 0, 0, 0});
+    	double ddd = indexer.getDouble(new long[] {0, 1, 0, 0});
+    	System.out.println(dd);
+    	System.out.println(ddd);
     	System.out.println("Done");
     }
 
