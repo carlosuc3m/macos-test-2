@@ -38,10 +38,6 @@ jobs:
           ${{ runner.os }}-${{ matrix.os-version }}-maven-
           ${{ runner.os }}-maven-
 
-        # Set up the matrix to test on different macOS versions
-        strategy:
-          matrix:
-            os-version: [catalina, monterrey]
     - name: Download weights file
       run: |
         if test -f /Users/runner/work/macos-test-2/macos-test-2/weights-torchscript.pt; then
