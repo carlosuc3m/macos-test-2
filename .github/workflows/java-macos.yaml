@@ -28,14 +28,27 @@ jobs:
         path: weights-torchscript.pt
         key: ${{ runner.os }}-weights-${{ hashFiles('**/weights-torchscript.pt') }}
         restore-keys: ${{ runner.os }}-weights-
-    - name: Download weights file
+    - name: Cache Maven Dependencies
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+          key: ${{ runner.os }}-${{ matrix.os-version }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.os-version }}-maven-
+            ${{ runner.os }}-maven-
+
+        # Set up the matrix to test on different macOS versions
+        strategy:
+          matrix:
+            os-version: [catalina, monterrey]
       run: |
         if test -f /Users/runner/work/macos-test-2/macos-test-2/weights-torchscript.pt; then
             echo "File exists"
         else
             curl -o weights-torchscript.pt https://zenodo.org/api/files/a7eb8d94-9217-4276-8b0d-ff88e1ac78c7/weights-torchscript.pt
         fi
-    - name: Build with Maven
+    - name: Package with Maven
       run: mvn package
     - name: Get directory where we are now
       run: |
@@ -48,4 +61,12 @@ jobs:
         # java -jar target/dl-model-runner-0.0.0.jar
         java -cp  target/pytorch-interface-javacpp-0.0.1.jar org.bioimageanalysis.icy.deeplearning.pytorch.PytorchInterface
       
-
+    - name: Save Cache
+      if: steps.cache-dependencies.outputs.cache-hit != 'true'
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-${{ matrix.os-version }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.os-version }}-maven-
+          ${{ runner.os }}-maven-
